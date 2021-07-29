@@ -10,23 +10,29 @@ import { listMycounters } from "./graphql/queries";
 const SignInWithFacebook = () => {
   useEffect(() => {
     if (!window.FB) createScript();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const [isSignedIn, setIsSignedIn] = useState(false);
   const [count, setCount] = useState(null);
 
-  const signIn = () => {
+  const signIn = async () => {
     const fb = window.FB;
     fb.getLoginStatus((response) => {
       if (response.status === "connected") {
-        getAWSCredentials(response.authResponse);
+        getAWSCredentials(response.authResponse)
+        .then (()=> _getCounter());
+        // await _getCounter();
+        // _getCounter();
       } else {
         fb.login(
           (response) => {
             if (!response || !response.authResponse) {
               return;
             }
-            getAWSCredentials(response.authResponse);
+            getAWSCredentials(response.authResponse)
+            .then (() => _getCounter());
+            // await _getCounter();
           },
           {
             // the authorized scopes
@@ -37,7 +43,17 @@ const SignInWithFacebook = () => {
     });
   };
 
-  const getAWSCredentials = (response) => {
+  const signOut = () => {
+    window.FB.logout(
+      () => {
+        console.log ('fb user logout.');
+        setIsSignedIn (false);
+        setCount (null);
+      }
+    );
+  }
+
+  const getAWSCredentials = async (response) => {
     const { accessToken, expiresIn } = response;
     const date = new Date();
     const expires_at = expiresIn * 1000 + date.getTime();
@@ -57,13 +73,12 @@ const SignInWithFacebook = () => {
         email: response.email,
       };
 
-      Auth.federatedSignIn(
+    Auth.federatedSignIn(
         "facebook",
         { token: accessToken, expires_at },
         user
-      ).then((credentials) => {
-        console.log(credentials);
-      });
+    ).then (credentials => 
+      console.log("credentails", credentials));
     });
   };
 
@@ -78,7 +93,7 @@ const SignInWithFacebook = () => {
   };
 
   const initFB = () => {
-    const fb = window.FB;
+    // const fb = window.FB;
     console.log("FB SDK initialized");
   };
 
@@ -88,6 +103,9 @@ const SignInWithFacebook = () => {
   };
 
   const auth_status_change_callback = (response) => {
+    if (response.status === 'connected') {
+      setIsSignedIn (true);
+    }
     console.log("auth_status_change_callback: " + response.status);
   };
 
@@ -135,7 +153,15 @@ const SignInWithFacebook = () => {
 
   return (
     <div>
+    {isSignedIn ? (
+      <div>
+        <div> Counter: {count? count.value: '...'} </div>
+        <button onClick={increaseCounter}>Increase</button>
+        <button onClick={signOut}> Sign out</button>
+      </div>
+    ) : (
       <button onClick={signIn}>Sign in with Facebook</button>
+    )}
     </div>
   );
 };
