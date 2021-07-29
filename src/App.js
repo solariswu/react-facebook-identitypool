@@ -12,8 +12,6 @@ function App() {
 
   return (
     <div className="App">
-      {/* <SignInWithGoogle></SignInWithGoogle> */}
-      {/* <GoogleBtn /> */}
       <SignInWithFacebook />
     </div>
   );

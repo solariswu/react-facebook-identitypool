@@ -1,17 +1,18 @@
 import React, { useEffect, useState } from "react";
 import { Auth } from "@aws-amplify/auth";
-
 import { API } from "@aws-amplify/api";
 
 import { graphqlOperation } from "@aws-amplify/api-graphql";
 import { updateMycounter } from "./graphql/mutations";
 import { listMycounters } from "./graphql/queries";
+
 // To federated sign in from Facebook
 const SignInWithFacebook = () => {
   useEffect(() => {
     if (!window.FB) createScript();
   }, []);
 
+  const [isSignedIn, setIsSignedIn] = useState(false);
   const [count, setCount] = useState(null);
 
   const signIn = () => {
@@ -99,8 +100,14 @@ const SignInWithFacebook = () => {
       xfbml: true,
       version: "v2.11",
     });
-    fb.Event.subscribe( "auth.authResponseChange", auth_response_change_callback);
-    fb.Event.subscribe("auth.statusChange", auth_status_change_callback);
+
+    fb.getLoginStatus((response) => {
+      if (response.status === "connected") {
+        setIsSignedIn (true);
+      }
+      fb.Event.subscribe( "auth.authResponseChange", auth_response_change_callback);
+      fb.Event.subscribe("auth.statusChange", auth_status_change_callback);
+    });
   };
 
   //GraphQL
