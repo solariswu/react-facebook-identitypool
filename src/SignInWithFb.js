@@ -113,7 +113,7 @@ const SignInWithFacebook = () => {
     // init the fb sdk client
     const fb = window.FB;
     fb.init({
-      appId: "2872561679644543",
+      appId: "182998633881578",
       cookie: true,
       xfbml: true,
       version: "v2.11",
