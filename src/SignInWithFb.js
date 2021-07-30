@@ -157,7 +157,8 @@ const SignInWithFacebook = () => {
       <div>
         <div> Counter: {count? count.value: '...'} </div>
         <button onClick={increaseCounter}>Increase</button>
-        <button onClick={signOut}> Sign out</button>
+        <br></br>
+        <button class="loginBtn loginBtn--facebook" onClick={signOut}> Sign out</button>
       </div>
     ) : (
       <button class="loginBtn loginBtn--facebook" onClick={signIn}>Sign in with Facebook</button>
