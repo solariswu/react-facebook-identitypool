@@ -160,7 +160,7 @@ const SignInWithFacebook = () => {
         <button onClick={signOut}> Sign out</button>
       </div>
     ) : (
-      <button onClick={signIn}>Sign in with Facebook</button>
+      <button class="loginBtn loginBtn--facebook" onClick={signIn}>Sign in with Facebook</button>
     )}
     </div>
   );
